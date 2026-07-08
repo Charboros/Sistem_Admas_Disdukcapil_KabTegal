@@ -19,8 +19,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('aduan', AduanController::class);
     Route::post('/aduan/{aduan}/respon', [ResponAduanController::class, 'store'])->name('aduan.respon.store');
 
-    // Laporan
-    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+    // Laporan dialihkan ke Dashboard (sudah digabung)
+    Route::get('/laporan', function () {
+        return redirect()->route('dashboard');
+    })->name('laporan.index');
 });
 
 Route::middleware('auth')->group(function () {
