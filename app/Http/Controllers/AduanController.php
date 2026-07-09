@@ -95,14 +95,26 @@ class AduanController extends Controller
     // Halaman Data Aduan (Daftar + Respon)
     // =========================================================
 
-    public function data()
+    public function data(Request $request)
     {
-        $aduans = Aduan::with(['petugas', 'respon.user'])
-            ->forUser(Auth::user())
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $query = Aduan::with(['petugas', 'respon.user'])->forUser(Auth::user());
 
-        return view('aduan.data', compact('aduans'));
+        if ($request->filled('status')) {
+            $status = $request->status === 'sudah' ? true : false;
+            $query->where('sudah_direspon', $status);
+        }
+        if ($request->filled('kanal')) {
+            $query->where('kanal', $request->kanal);
+        }
+        if ($request->filled('tahun')) {
+            $query->whereYear('tanggal_aduan', $request->tahun);
+        }
+
+        $aduans = $query->orderBy('created_at', 'desc')->get();
+        $listKanal = self::listKanal();
+        $listTahun = Aduan::daftarTahun()->pluck('tahun');
+
+        return view('aduan.data', compact('aduans', 'listKanal', 'listTahun'));
     }
 
     // =========================================================
