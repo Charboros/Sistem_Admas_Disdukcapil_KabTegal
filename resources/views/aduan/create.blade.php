@@ -155,7 +155,7 @@
                             Bukti Foto / Screenshot
                         </label>
                         <div class="relative border-2 border-dashed border-slate-200 rounded-xl p-5
-                                    hover:border-blue-300 transition-colors bg-slate-50/50"
+                                    hover:border-blue-300 hover:bg-slate-50 transition-colors bg-slate-50/50 cursor-pointer"
                              id="drop-zone">
                             <div class="flex flex-col items-center gap-2 text-center" id="drop-placeholder">
                                 <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
@@ -244,5 +244,37 @@
             };
             reader.readAsDataURL(file);
         });
+
+        // Drag and drop events
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('screenshot-file');
+        
+        if(dropZone && fileInput) {
+            // Make dropzone clickable
+            dropZone.addEventListener('click', () => fileInput.click());
+
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('border-blue-400', 'bg-blue-50');
+                dropZone.classList.remove('border-slate-200', 'bg-slate-50/50');
+            });
+
+            dropZone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('border-blue-400', 'bg-blue-50');
+                dropZone.classList.add('border-slate-200', 'bg-slate-50/50');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('border-blue-400', 'bg-blue-50');
+                dropZone.classList.add('border-slate-200', 'bg-slate-50/50');
+
+                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                    fileInput.files = e.dataTransfer.files;
+                    fileInput.dispatchEvent(new Event('change'));
+                }
+            });
+        }
     </script>
 </x-app-layout>
