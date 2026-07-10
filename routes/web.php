@@ -17,6 +17,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/aduan/input', [AduanController::class, 'store'])->name('aduan.store');
     Route::get('/aduan/data', [AduanController::class, 'data'])->name('aduan.data');
     Route::get('/aduan/{aduan}', [AduanController::class, 'show'])->name('aduan.show');
+    Route::get('/aduan/{aduan}/image', [AduanController::class, 'image'])->name('aduan.image');
     Route::delete('/aduan/{aduan}', [AduanController::class, 'destroy'])->name('aduan.destroy');
 
     Route::post('/aduan/{aduan}/respon', [ResponAduanController::class, 'store'])->name('aduan.respon.store');

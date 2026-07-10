@@ -106,7 +106,7 @@
                         <h2 class="font-bold text-slate-700 text-sm">Screenshot Aduan</h2>
                     </div>
                     <div class="p-6">
-                        <img src="data:image/jpeg;base64,{{ base64_encode($aduan->screenshot) }}"
+                        <img src="{{ route('aduan.image', $aduan->id) }}"
                              alt="Screenshot"
                              class="max-h-80 rounded-xl border border-slate-200 shadow-sm
                                     cursor-zoom-in hover:opacity-90 transition"

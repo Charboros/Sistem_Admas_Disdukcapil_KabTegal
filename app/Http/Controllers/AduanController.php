@@ -111,8 +111,22 @@ class AduanController extends Controller
     }
 
     // =========================================================
-    // Halaman Detail Aduan (Read-only)
+    // Halaman Detail Aduan (Read-only) & Gambar
     // =========================================================
+
+    public function image(Aduan $aduan)
+    {
+        if (!$aduan->screenshot) {
+            abort(404);
+        }
+
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $mime = $finfo->buffer($aduan->screenshot) ?: 'image/jpeg';
+
+        return response($aduan->screenshot)
+            ->header('Content-Type', $mime)
+            ->header('Cache-Control', 'public, max-age=31536000'); // Cache 1 tahun di browser
+    }
 
     public function show(Aduan $aduan)
     {

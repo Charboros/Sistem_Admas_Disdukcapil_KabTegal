@@ -66,13 +66,6 @@
                             <div class="flex-1 flex flex-col gap-1.5 border-r border-slate-100 pr-4">
                                 <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Kanal</span>
                                 <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-700 w-max">
-                                    @if($aduan->kanal === 'Instagram')
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                                    @elseif($aduan->kanal === 'Facebook')
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                                    @elseif(str_contains($aduan->kanal, 'Gmaps'))
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C8.052 0 4.5 3.552 4.5 7.5c0 5.523 7.5 16.5 7.5 16.5s7.5-10.977 7.5-16.5C19.5 3.552 15.948 0 12 0zm0 10.5c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z"/></svg>
-                                    @endif
                                     {{ $aduan->kanal }}
                                 </span>
                                 <span class="font-mono text-xs font-bold text-blue-600 mt-1">#{{ $aduan->id }}</span>
@@ -89,11 +82,12 @@
                             <div class="flex-none w-32 flex flex-col gap-1.5 border-r border-slate-100 pr-4 items-center text-center">
                                 <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Gambar</span>
                                 @if($aduan->screenshot)
-                                    <img src="data:image/jpeg;base64,{{ base64_encode($aduan->screenshot) }}" 
+                                    <img src="{{ route('aduan.image', $aduan->id) }}" 
                                          alt="Screenshot" 
                                          class="w-12 h-12 object-cover rounded shadow-sm border border-slate-200 cursor-zoom-in hover:opacity-90"
-                                         onclick="openLightbox('data:image/jpeg;base64,{{ base64_encode($aduan->screenshot) }}')"
-                                         title="Klik jika ingin lihat full">
+                                         onclick="openLightbox('{{ route('aduan.image', $aduan->id) }}')"
+                                         title="Klik jika ingin lihat full"
+                                         loading="lazy">
                                 @else
                                     <span class="text-[10px] text-slate-400 italic mt-2">Tidak ada foto</span>
                                 @endif
@@ -120,12 +114,12 @@
                                 <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status</span>
                                 @if($aduan->sudah_direspon)
                                     <span class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
-                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                        <x-icons.check-solid class="w-3 h-3" />
                                         Sudah Direspon
                                     </span>
                                 @else
                                     <span class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-100">
-                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+                                        <x-icons.clock-solid class="w-3 h-3" />
                                         Belum Direspon
                                     </span>
                                 @endif

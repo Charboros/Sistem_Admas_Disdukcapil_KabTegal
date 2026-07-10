@@ -32,16 +32,7 @@ class AduanExport implements
         $query = Aduan::with(['petugas', 'respon.user']);
 
         if ($request) {
-            if ($request->filled('status')) {
-                $status = $request->status === 'sudah' ? true : false;
-                $query->where('sudah_direspon', $status);
-            }
-            if ($request->filled('kanal')) {
-                $query->where('kanal', $request->kanal);
-            }
-            if ($request->filled('tahun')) {
-                $query->whereYear('tanggal_aduan', $request->tahun);
-            }
+            $query->filterAduan($request);
         }
 
         $this->aduans = $query->orderBy('tanggal_aduan', 'desc')->get();
@@ -102,7 +93,7 @@ class AduanExport implements
         $totalRows = $this->aduans->count() + 1;
 
         // Header row
-        $sheet->getStyle('A1:M1')->applyFromArray([
+        $sheet->getStyle('A1:K1')->applyFromArray([
             'font' => [
                 'bold'  => true,
                 'color' => ['rgb' => 'FFFFFF'],
@@ -131,7 +122,7 @@ class AduanExport implements
             for ($row = 2; $row <= $totalRows; $row++) {
                 $bgColor = ($row % 2 === 0) ? 'EFF6FF' : 'FFFFFF';
 
-                $sheet->getStyle("A{$row}:M{$row}")->applyFromArray([
+                $sheet->getStyle("A{$row}:K{$row}")->applyFromArray([
                     'fill' => [
                         'fillType'   => Fill::FILL_SOLID,
                         'startColor' => ['rgb' => $bgColor],
@@ -189,7 +180,7 @@ class AduanExport implements
                 $sheet->insertNewRowBefore(1, 2);
 
                 // Merge dan isi keterangan
-                $sheet->mergeCells('A1:M1');
+                $sheet->mergeCells('A1:K1');
                 $sheet->setCellValue('A1', 'REKAP ADUAN LAYANAN — DISDUKCAPIL KABUPATEN TEGAL');
                 $sheet->getStyle('A1')->applyFromArray([
                     'font'      => ['bold' => true, 'size' => 13, 'color' => ['rgb' => '1E3A8A']],
@@ -197,7 +188,7 @@ class AduanExport implements
                 ]);
                 $sheet->getRowDimension(1)->setRowHeight(30);
 
-                $sheet->mergeCells('A2:M2');
+                $sheet->mergeCells('A2:K2');
                 $sheet->setCellValue('A2', 'Tanggal Export: ' . now()->isoFormat('D MMMM Y'));
                 $sheet->getStyle('A2')->applyFromArray([
                     'font'      => ['size' => 10, 'color' => ['rgb' => '64748B'], 'italic' => true],
@@ -207,16 +198,23 @@ class AduanExport implements
 
                 // Embed gambar screenshot
                 $row = 4; // data starts at row 4 (header at row 3, 2 info rows above)
+                $tempDir = storage_path('app/temp_excel_images');
+                if (!is_dir($tempDir)) {
+                    @mkdir($tempDir, 0777, true);
+                }
+
                 foreach ($this->aduans as $aduan) {
-                    if ($aduan->screenshot_path) {
-                        $filePath = storage_path('app/public/' . $aduan->screenshot_path);
-                        if (file_exists($filePath)) {
+                    if ($aduan->screenshot) {
+                        $tempPath = $tempDir . '/aduan_img_' . $aduan->id . '.jpg';
+                        file_put_contents($tempPath, $aduan->screenshot);
+
+                        if (file_exists($tempPath)) {
                             $drawing = new Drawing();
                             $drawing->setName('Screenshot');
                             $drawing->setDescription('Bukti Aduan');
-                            $drawing->setPath($filePath);
+                            $drawing->setPath($tempPath);
                             $drawing->setHeight(60);
-                            $drawing->setCoordinates('M' . $row);
+                            $drawing->setCoordinates('K' . $row);
                             $drawing->setOffsetX(4);
                             $drawing->setOffsetY(4);
                             $drawing->setWorksheet($sheet);
@@ -230,7 +228,7 @@ class AduanExport implements
 
                 // Auto filter
                 $lastRow = $this->aduans->count() + 3;
-                $sheet->setAutoFilter('A3:M3');
+                $sheet->setAutoFilter('A3:K3');
 
                 // Print settings
                 $sheet->getPageSetup()
