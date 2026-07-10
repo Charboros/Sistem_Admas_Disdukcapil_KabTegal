@@ -75,7 +75,7 @@
                                     @endif
                                     {{ $aduan->kanal }}
                                 </span>
-                                <span class="font-mono text-xs font-bold text-blue-600 mt-1">{{ $aduan->nomor_aduan }}</span>
+                                <span class="font-mono text-xs font-bold text-blue-600 mt-1">#{{ $aduan->id }}</span>
                             </div>
     
                             {{-- Kolom 2: Klasifikasi --}}
@@ -86,14 +86,13 @@
                                 </span>
                             </div>
     
-                            {{-- Kolom 3: Gambar Mini --}}
                             <div class="flex-none w-32 flex flex-col gap-1.5 border-r border-slate-100 pr-4 items-center text-center">
                                 <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Gambar</span>
-                                @if($aduan->screenshot_path)
-                                    <img src="{{ asset('storage/' . $aduan->screenshot_path) }}" 
+                                @if($aduan->screenshot)
+                                    <img src="data:image/jpeg;base64,{{ base64_encode($aduan->screenshot) }}" 
                                          alt="Screenshot" 
                                          class="w-12 h-12 object-cover rounded shadow-sm border border-slate-200 cursor-zoom-in hover:opacity-90"
-                                         onclick="openLightbox('{{ asset('storage/' . $aduan->screenshot_path) }}')"
+                                         onclick="openLightbox('data:image/jpeg;base64,{{ base64_encode($aduan->screenshot) }}')"
                                          title="Klik jika ingin lihat full">
                                 @else
                                     <span class="text-[10px] text-slate-400 italic mt-2">Tidak ada foto</span>
@@ -141,7 +140,7 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </a>
                         @if(Auth::user()->isAdmin())
-                            <form action="{{ route('aduan.destroy', $aduan->id) }}" method="POST" onsubmit="return confirm('Hapus aduan {{ $aduan->nomor_aduan }}?')" class="shrink-0">
+                            <form action="{{ route('aduan.destroy', $aduan->id) }}" method="POST" onsubmit="return confirm('Hapus aduan #{{ $aduan->id }}?')" class="shrink-0">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-red-50 text-red-600 hover:bg-red-100 transition border border-red-100 flex items-center justify-center h-full">

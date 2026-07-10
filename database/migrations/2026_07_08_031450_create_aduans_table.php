@@ -10,7 +10,6 @@ return new class extends Migration
     {
         Schema::create('aduans', function (Blueprint $table) {
             $table->id();
-            $table->string('nomor_aduan')->unique();
             $table->string('kanal');
             $table->string('klasifikasi');
             $table->string('nama_akun')->nullable();
@@ -18,11 +17,20 @@ return new class extends Migration
             $table->string('caption')->nullable();
             $table->date('tanggal_aduan');
             $table->time('waktu_aduan')->nullable();
-            $table->string('screenshot_path')->nullable();
             $table->boolean('sudah_direspon')->default(false);
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->timestamps();
+            
+            // Tambahkan INDEX untuk mempercepat proses filter & statistik
+            $table->index('tanggal_aduan');
+            $table->index('kanal');
+            $table->index('klasifikasi');
+            $table->index('sudah_direspon');
+            $table->index('created_by');
         });
+        
+        // Gunakan MEDIUMBLOB agar bisa menyimpan file gambar binary hingga 16MB tanpa base64 overhead
+        \Illuminate\Support\Facades\DB::statement("ALTER TABLE aduans ADD screenshot MEDIUMBLOB NULL AFTER waktu_aduan");
     }
 
     public function down(): void

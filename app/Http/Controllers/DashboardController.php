@@ -41,7 +41,7 @@ class DashboardController extends Controller
         $tahunDipilih = (int) $request->get('tahun', date('Y'));
         
         // Ambil daftar tahun apa saja yang ada di database aduan
-        $daftarTahun = (clone $base)->daftarTahun()->pluck('tahun')->toArray();
+        $daftarTahun = Aduan::getDaftarTahun(clone $base);
 
         // Jika tabel aduan masih kosong, defaultkan ke tahun saat ini
         if (empty($daftarTahun)) {
@@ -71,7 +71,7 @@ class DashboardController extends Controller
         $dataBulan      = Aduan::dataBulanFormatted(clone $base, $tahunDipilih);
         
         // Tren keseluruhan tahun per tahun
-        $trenTahunan    = (clone $base)->trenTahunan()->get();
+        $trenTahunan    = Aduan::getTrenTahunan(clone $base);
 
         return view('dashboard', compact(
             'totalAduan',

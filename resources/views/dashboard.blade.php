@@ -33,10 +33,7 @@
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex items-center gap-4">
             <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
                  style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                </svg>
+                <x-icons.aduan />
             </div>
             <div>
                 <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Total Aduan</p>
@@ -49,10 +46,7 @@
         <div class="bg-white rounded-2xl shadow-sm border border-red-100 p-5 flex items-center gap-4">
             <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
                  style="background: linear-gradient(135deg, #f87171 0%, #dc2626 100%);">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
+                <x-icons.alert />
             </div>
             <div>
                 <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Belum Direspon</p>
@@ -69,10 +63,7 @@
         <div class="bg-white rounded-2xl shadow-sm border border-emerald-100 p-5 flex items-center gap-4">
             <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
                  style="background: linear-gradient(135deg, #34d399 0%, #059669 100%);">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
+                <x-icons.check />
             </div>
             <div>
                 <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Sudah Direspon</p>
@@ -284,7 +275,7 @@
     {{-- ======================================================= --}}
     {{-- TREN TAHUNAN --}}
     {{-- ======================================================= --}}
-    @if($trenTahunan->count() > 1)
+    @if(count($trenTahunan) > 1)
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100">
                 <h3 class="font-bold text-slate-800">Tren Aduan Tahunan</h3>
@@ -365,14 +356,14 @@
         });
         @endif
 
-        @if($trenTahunan->count() > 1)
+        @if(count($trenTahunan) > 1)
         new Chart(document.getElementById('chartTren'), {
             type: 'line',
             data: {
-                labels: @json($trenTahunan->pluck('tahun')),
+                labels: @json(array_column($trenTahunan, 'tahun')),
                 datasets: [{
                     label: 'Total Aduan',
-                    data: @json($trenTahunan->pluck('jumlah')),
+                    data: @json(array_column($trenTahunan, 'jumlah')),
                     borderColor: '#3B82F6',
                     backgroundColor: 'rgba(59,130,246,0.08)',
                     fill: true,

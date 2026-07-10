@@ -19,16 +19,15 @@ class AduanSeeder extends Seeder
         // Data ini nantinya akan dilooping (diulang) dan disimpan ke database
         $data = [
             [
-                'nomor_aduan'    => 'ADU-2026-001',
                 'kanal'          => 'Instagram',
                 'klasifikasi'    => 'Pelayanan Pencatatan Sipil',
                 'nama_akun'      => 'Siti Aminah',
                 'isi_aduan'      => 'Warga atas nama Siti Aminah melaporkan kesulitan mengurus akta kelahiran anaknya karena dokumen persyaratan kurang jelas.',
-                'caption'        => 'Laporan via Instagram DM',
+
                 'sudah_direspon' => true,
                 'tanggal_aduan'  => now()->subDays(3)->toDateString(),
                 'waktu_aduan'    => '09:30',
-                'screenshot_path'=> null,
+                'screenshot'     => null,
                 'created_by'     => $petugas->id,
                 'respon'         => [
                     [
@@ -39,29 +38,27 @@ class AduanSeeder extends Seeder
                 ]
             ],
             [
-                'nomor_aduan'    => 'ADU-2026-002',
                 'kanal'          => 'Facebook',
                 'klasifikasi'    => 'Rekam/Cetak/KTP/KIA',
                 'nama_akun'      => 'Budi Santoso',
                 'isi_aduan'      => 'Saya mengeluhkan proses perekaman KTP yang terlalu lama, sudah 2 minggu belum selesai.',
-                'caption'        => 'Komentar di halaman Facebook resmi',
+
                 'sudah_direspon' => false,
                 'tanggal_aduan'  => now()->subDays(1)->toDateString(),
                 'waktu_aduan'    => '14:15',
-                'screenshot_path'=> null,
+                'screenshot'     => null,
                 'created_by'     => $petugas->id,
             ],
             [
-                'nomor_aduan'    => 'ADU-2026-003',
                 'kanal'          => 'Gmaps Review',
                 'klasifikasi'    => 'Pelayanan Pendaftaran Penduduk',
                 'nama_akun'      => 'Joko Tingkir',
                 'isi_aduan'      => 'Antrian panjang dan sistem nomor antrian yang tidak tertib. Tolong diperbaiki fasilitasnya.',
-                'caption'        => 'Review bintang 2 di Google Maps',
+
                 'sudah_direspon' => true,
                 'tanggal_aduan'  => now()->subDays(7)->toDateString(),
                 'waktu_aduan'    => '10:00',
-                'screenshot_path'=> null,
+                'screenshot'     => null,
                 'created_by'     => $admin->id,
                 'respon'         => [
                     [
@@ -72,29 +69,27 @@ class AduanSeeder extends Seeder
                 ]
             ],
             [
-                'nomor_aduan'    => 'ADU-2026-004',
                 'kanal'          => 'Instagram',
                 'klasifikasi'    => 'Infrastruktur',
                 'nama_akun'      => 'Rina Wijaya',
                 'isi_aduan'      => 'Kondisi toilet di kantor pelayanan kurang bersih dan perlu perhatian segera.',
-                'caption'        => 'Story Instagram dengan tag lokasi',
+
                 'sudah_direspon' => false,
                 'tanggal_aduan'  => now()->subDays(10)->toDateString(),
                 'waktu_aduan'    => '11:30',
-                'screenshot_path'=> null,
+                'screenshot'     => null,
                 'created_by'     => $petugas->id,
             ],
             [
-                'nomor_aduan'    => 'ADU-2026-005',
                 'kanal'          => 'Lainnya',
                 'klasifikasi'    => 'Lainnya: Pertanyaan Umum',
                 'nama_akun'      => 'Andi Prasetyo',
                 'isi_aduan'      => 'Apakah besok buka melayani legalisir KK?',
-                'caption'        => null,
+
                 'sudah_direspon' => true,
                 'tanggal_aduan'  => now()->subDays(12)->toDateString(),
                 'waktu_aduan'    => '08:45',
-                'screenshot_path'=> null,
+                'screenshot'     => null,
                 'created_by'     => $petugas->id,
                 'respon'         => [
                     [
@@ -115,9 +110,9 @@ class AduanSeeder extends Seeder
             $responData = $item['respon'] ?? [];
             unset($item['respon']);
 
-            // Simpan atau perbarui aduan (menghindari duplikasi nomor_aduan jika di-seed ulang)
+            // Simpan atau perbarui aduan berdasarkan isi_aduan
             $aduan = Aduan::updateOrCreate(
-                ['nomor_aduan' => $item['nomor_aduan']],
+                ['isi_aduan' => $item['isi_aduan']],
                 $item
             );
 

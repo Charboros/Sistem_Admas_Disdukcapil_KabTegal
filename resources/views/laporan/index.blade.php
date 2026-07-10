@@ -78,7 +78,6 @@
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase tracking-wide">
                         <th class="px-4 py-3 text-left font-semibold w-8">#</th>
-                        <th class="px-4 py-3 text-left font-semibold">Nomor Aduan</th>
                         <th class="px-4 py-3 text-left font-semibold">Tanggal & Waktu</th>
                         <th class="px-4 py-3 text-left font-semibold">Kanal</th>
                         <th class="px-4 py-3 text-left font-semibold">Klasifikasi</th>
@@ -91,12 +90,10 @@
                 <tbody class="divide-y divide-slate-100">
                     @forelse($aduans as $index => $item)
                         <tr class="hover:bg-blue-50/30 transition-colors searchable-row">
-                            <td class="px-4 py-3 text-slate-400 text-xs">{{ $index + 1 }}</td>
-
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 text-slate-400 text-xs">
                                 <a href="{{ route('aduan.show', $item->id) }}"
-                                   class="font-mono text-xs font-bold text-blue-700 hover:underline">
-                                    {{ $item->nomor_aduan }}
+                                   class="font-mono font-bold text-blue-700 hover:underline" title="Lihat Detail Aduan">
+                                    {{ $index + 1 }}
                                 </a>
                             </td>
 

@@ -53,7 +53,6 @@ class AduanExport implements
         return $this->aduans->map(function ($aduan) use (&$no) {
             return [
                 'No'            => $no++,
-                'Nomor Aduan'   => $aduan->nomor_aduan,
                 'Tanggal'       => $aduan->tanggal_aduan
                                     ? $aduan->tanggal_aduan->format('d/m/Y')
                                     : '-',
@@ -62,7 +61,6 @@ class AduanExport implements
                 'Klasifikasi'   => $aduan->klasifikasi  ?? '-',
                 'Nama Akun'     => $aduan->nama_akun    ?? '-',
                 'Isi Aduan'     => $aduan->isi_aduan,
-                'Caption'       => $aduan->caption      ?? '-',
                 'Status Respon' => $aduan->sudah_direspon ? 'Sudah Direspon' : 'Belum Direspon',
                 'Isi Respon'    => $aduan->respon->count() > 0 
                                      ? $aduan->respon->pluck('isi_respon')->implode("\n\n") 
@@ -76,8 +74,8 @@ class AduanExport implements
     public function headings(): array
     {
         return [
-            'No', 'Nomor Aduan', 'Tanggal', 'Waktu', 'Kanal', 'Klasifikasi',
-            'Nama Akun', 'Isi Aduan', 'Caption', 'Status Respon', 'Isi Respon',
+            'No', 'Tanggal', 'Waktu', 'Kanal', 'Klasifikasi',
+            'Nama Akun', 'Isi Aduan', 'Status Respon', 'Isi Respon',
             'Petugas', 'Foto',
         ];
     }
@@ -86,18 +84,16 @@ class AduanExport implements
     {
         return [
             'A' => 5,   // No
-            'B' => 17,  // Nomor Aduan
-            'C' => 13,  // Tanggal
-            'D' => 10,  // Waktu
-            'E' => 14,  // Kanal
-            'F' => 30,  // Klasifikasi
-            'G' => 20,  // Nama Akun
-            'H' => 50,  // Isi Aduan
-            'I' => 35,  // Caption
-            'J' => 18,  // Status Respon
-            'K' => 45,  // Isi Respon
-            'L' => 18,  // Petugas
-            'M' => 22,  // Foto
+            'B' => 15,  // Tanggal
+            'C' => 10,  // Waktu
+            'D' => 15,  // Kanal
+            'E' => 30,  // Klasifikasi
+            'F' => 20,  // Nama Akun
+            'G' => 50,  // Isi Aduan
+            'H' => 18,  // Status Respon
+            'I' => 45,  // Isi Respon
+            'J' => 18,  // Petugas
+            'K' => 22,  // Foto
         ];
     }
 

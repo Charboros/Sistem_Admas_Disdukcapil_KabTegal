@@ -9,8 +9,7 @@
                     </svg>
                 </a>
                 <div>
-                    <h1 class="font-bold text-xl text-slate-800">Detail Aduan</h1>
-                    <p class="text-sm text-blue-600 font-mono mt-0.5">{{ $aduan->nomor_aduan }}</p>
+                    <h1 class="font-bold text-xl text-slate-800">Detail Aduan #{{ $aduan->id }}</h1>
                 </div>
             </div>
             @if($aduan->sudah_direspon)
@@ -97,24 +96,17 @@
                                    border border-slate-100 whitespace-pre-wrap">{{ $aduan->isi_aduan }}</dd>
                     </div>
 
-                    {{-- Caption --}}
-                    @if($aduan->caption)
-                        <div class="pt-4 border-t border-slate-100">
-                            <dt class="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1">Caption</dt>
-                            <dd class="text-slate-500 text-sm italic">{{ $aduan->caption }}</dd>
-                        </div>
-                    @endif
                 </div>
             </div>
 
             {{-- Screenshot --}}
-            @if($aduan->screenshot_path)
+            @if($aduan->screenshot)
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="px-6 py-4 border-b border-slate-100">
                         <h2 class="font-bold text-slate-700 text-sm">Screenshot Aduan</h2>
                     </div>
                     <div class="p-6">
-                        <img src="{{ asset('storage/' . $aduan->screenshot_path) }}"
+                        <img src="data:image/jpeg;base64,{{ base64_encode($aduan->screenshot) }}"
                              alt="Screenshot"
                              class="max-h-80 rounded-xl border border-slate-200 shadow-sm
                                     cursor-zoom-in hover:opacity-90 transition"

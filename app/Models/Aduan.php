@@ -10,15 +10,14 @@ class Aduan extends Model
     // Daftar kolom tabel `aduans` yang diizinkan untuk diisi secara massal (Mass Assignment)
     // Field yang tidak ada di sini tidak akan bisa disimpan via fungsi create()
     protected $fillable = [
-        'nomor_aduan',
         'kanal',
         'klasifikasi',
         'nama_akun',
         'isi_aduan',
-        'caption',
+
         'tanggal_aduan',
         'waktu_aduan',
-        'screenshot_path',
+        'screenshot',
         'sudah_direspon',
         'isi_respon_awal',
         'created_by',
@@ -33,19 +32,7 @@ class Aduan extends Model
     // Helpers
     // =========================================================
 
-    protected static function datePartExpression(string $part): string
-    {
-        $driver = app('db')->connection()->getDriverName();
-        return match ($driver) {
-            'sqlite' => $part === 'month'
-                ? "strftime('%m', tanggal_aduan)"
-                : "strftime('%Y', tanggal_aduan)",
-            'pgsql' => $part === 'month'
-                ? 'EXTRACT(MONTH FROM DATE(tanggal_aduan))'
-                : 'EXTRACT(YEAR FROM DATE(tanggal_aduan))',
-            default => $part === 'month' ? 'MONTH(tanggal_aduan)' : 'YEAR(tanggal_aduan)',
-        };
-    }
+    // datePartExpression sudah tidak digunakan karena kita pakai whereBetween untuk optimasi index
 
     // =========================================================
     // 1. Relasi Antar Tabel (Relationships)
@@ -77,10 +64,8 @@ class Aduan extends Model
      */
     public function scopeForUser(Builder $query, User $user): Builder
     {
-        if ($user->role === 'petugas') {
-            return $query->where('created_by', $user->id);
-        }
-        // Jika bukan petugas (misal admin), jangan batasi datanya
+        // Menampilkan semua data ke semua user (termasuk petugas)
+        // agar perhitungan total (dashboard) & data tabel sinkron antar akun.
         return $query;
     }
 
@@ -88,7 +73,7 @@ class Aduan extends Model
     {
         return $query
             ->selectRaw('COALESCE(kanal, "Tidak Diketahui") as kanal, COUNT(*) as jumlah')
-            ->whereRaw(sprintf('%s = ?', self::datePartExpression('year')), [$tahun])
+            ->whereBetween('tanggal_aduan', ["{$tahun}-01-01", "{$tahun}-12-31"])
             ->groupBy('kanal')
             ->orderBy('jumlah', 'desc');
     }
@@ -97,20 +82,28 @@ class Aduan extends Model
     {
         return $query
             ->selectRaw('COALESCE(klasifikasi, "Tidak Diketahui") as klasifikasi, COUNT(*) as jumlah')
-            ->whereRaw(sprintf('%s = ?', self::datePartExpression('year')), [$tahun])
+            ->whereBetween('tanggal_aduan', ["{$tahun}-01-01", "{$tahun}-12-31"])
             ->groupBy('klasifikasi')
             ->orderBy('jumlah', 'desc');
     }
 
     public static function dataBulanFormatted(Builder $query, int $tahun): array
     {
-        $raw = (clone $query)
-            ->selectRaw(sprintf('%s as bulan, COUNT(*) as jumlah', self::datePartExpression('month')))
-            ->whereRaw(sprintf('%s = ?', self::datePartExpression('year')), [$tahun])
-            ->groupBy('bulan')
-            ->orderBy('bulan')
-            ->get()
-            ->keyBy('bulan');
+        // Untuk optimasi, kita ambil data lalu grouping di collection (PHP)
+        // daripada menggunakan MONTH() di query yang membuat index tidak dipakai.
+        $rawAduans = (clone $query)
+            ->whereBetween('tanggal_aduan', ["{$tahun}-01-01", "{$tahun}-12-31"])
+            ->get(['tanggal_aduan']);
+
+        $grouped = [];
+        foreach ($rawAduans as $aduan) {
+            // Karena di model sudah dicast ke date (Carbon)
+            $bulan = $aduan->tanggal_aduan->format('n');
+            if (!isset($grouped[$bulan])) {
+                $grouped[$bulan] = 0;
+            }
+            $grouped[$bulan]++;
+        }
 
         $namaBulan = [
             1 => 'Jan', 2 => 'Feb', 3 => 'Mar', 4  => 'Apr',
@@ -122,32 +115,62 @@ class Aduan extends Model
         for ($b = 1; $b <= 12; $b++) {
             $result[] = [
                 'bulan'  => $namaBulan[$b],
-                'jumlah' => isset($raw[$b]) ? (int) $raw[$b]->jumlah : 0,
+                'jumlah' => $grouped[$b] ?? 0,
             ];
         }
         return $result;
     }
 
-    public function scopeTrenTahunan(Builder $query): Builder
+    public static function getTrenTahunan(Builder $query): array
     {
-        return $query
-            ->selectRaw(sprintf('%s as tahun, COUNT(*) as jumlah', self::datePartExpression('year')))
-            ->whereNotNull('tanggal_aduan')
-            ->groupBy('tahun')
-            ->orderBy('tahun');
+        $raw = (clone $query)->whereNotNull('tanggal_aduan')->get(['tanggal_aduan']);
+        $grouped = [];
+        foreach ($raw as $aduan) {
+            $tahun = $aduan->tanggal_aduan->format('Y');
+            if (!isset($grouped[$tahun])) $grouped[$tahun] = 0;
+            $grouped[$tahun]++;
+        }
+        ksort($grouped);
+        
+        $result = [];
+        foreach ($grouped as $tahun => $jumlah) {
+            $result[] = (object) ['tahun' => $tahun, 'jumlah' => $jumlah];
+        }
+        return $result;
     }
 
-    public function scopeDaftarTahun(Builder $query): Builder
+    public static function getDaftarTahun(Builder $query): array
     {
-        return $query
-            ->selectRaw(sprintf('%s as tahun', self::datePartExpression('year')))
-            ->distinct()
-            ->whereNotNull('tanggal_aduan')
-            ->orderBy('tahun', 'desc');
+        $raw = (clone $query)->whereNotNull('tanggal_aduan')->get(['tanggal_aduan']);
+        $tahun = [];
+        foreach ($raw as $aduan) {
+            $tahun[$aduan->tanggal_aduan->format('Y')] = true;
+        }
+        $tahun = array_keys($tahun);
+        rsort($tahun);
+        return $tahun;
     }
 
     public function scopeInYear(Builder $query, int $year): Builder
     {
-        return $query->whereRaw(sprintf('%s = ?', self::datePartExpression('year')), [$year]);
+        return $query->whereBetween('tanggal_aduan', ["{$year}-01-01", "{$year}-12-31"]);
+    }
+
+    public function scopeFilterAduan(Builder $query, \Illuminate\Http\Request $request): Builder
+    {
+        return $query
+            ->when($request->filled('status'), function ($q) use ($request) {
+                $q->where('sudah_direspon', $request->status === 'sudah');
+            })
+            ->when($request->filled('kanal'), function ($q) use ($request) {
+                if ($request->kanal === 'Lainnya') {
+                    $q->where('kanal', 'like', 'Lainnya%');
+                } else {
+                    $q->where('kanal', $request->kanal);
+                }
+            })
+            ->when($request->filled('tahun'), function ($q) use ($request) {
+                $q->whereYear('tanggal_aduan', $request->tahun);
+            });
     }
 }

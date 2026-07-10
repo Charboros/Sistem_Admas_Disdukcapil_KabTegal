@@ -17,7 +17,7 @@ class AduanController extends Controller
 
     public static function listKanal(): array
     {
-        return ['Instagram', 'Facebook', 'Gmaps Review', 'Lainnya'];
+        return ['Instagram', 'Facebook', 'TikTok', 'Gmaps Review', 'Lainnya'];
     }
 
     public static function listKlasifikasi(): array
@@ -49,18 +49,15 @@ class AduanController extends Controller
             'kanal'          => 'required|string',
             'klasifikasi'    => 'required|string',
             'isi_aduan'      => 'required|string',
-            'caption'        => 'nullable|string|max:500',
+
             'tanggal_aduan'  => 'required|date',
             'waktu_aduan'    => 'nullable|date_format:H:i',
             'screenshot'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
-        $nextId     = (Aduan::max('id') ?? 0) + 1;
-        $nomorAduan = 'ADU-' . date('Y') . '-' . str_pad($nextId, 3, '0', STR_PAD_LEFT);
-
-        $screenshotPath = null;
+        $screenshotData = null;
         if ($request->hasFile('screenshot')) {
-            $screenshotPath = $request->file('screenshot')->store('screenshots', 'public');
+            $screenshotData = file_get_contents($request->file('screenshot')->getRealPath());
         }
 
         // Ambil klasifikasi: jika "Lainnya", gabung dengan keterangan
@@ -79,21 +76,20 @@ class AduanController extends Controller
         // ------------------------------------------------------------------
         // Menggunakan method create() dari Eloquent ORM. Pastikan field
         // yang diisi sudah terdaftar di property $fillable pada model Aduan.
-        Aduan::create([
-            'nomor_aduan'    => $nomorAduan,
+        $aduan = Aduan::create([
             'kanal'          => $kanal,
             'klasifikasi'    => $klasifikasi,
             'nama_akun'      => $request->nama_akun,
             'isi_aduan'      => $request->isi_aduan,
-            'caption'        => $request->caption,
+
             'tanggal_aduan'  => $request->tanggal_aduan,
             'waktu_aduan'    => $request->waktu_aduan,
-            'screenshot_path'=> $screenshotPath,
+            'screenshot'     => $screenshotData,
             'sudah_direspon' => false,      // Nilai awal saat aduan baru dibuat selalu false (belum direspon)
             'created_by'     => Auth::id(), // ID dari user yang sedang login saat menyimpan data
         ]);
 
-        return back()->with('success', 'Aduan berhasil disimpan dengan nomor ' . $nomorAduan . '.');
+        return back()->with('success', 'Aduan berhasil disimpan dengan ID ' . $aduan->id . '.');
     }
 
     // =========================================================
@@ -102,48 +98,14 @@ class AduanController extends Controller
 
     public function data(Request $request)
     {
-        // ------------------------------------------------------------------
-        // 1. Inisialisasi Query Dasar (Base Query)
-        // ------------------------------------------------------------------
-        // with()     : Mengambil relasi 'petugas' dan 'respon.user' sekaligus untuk menghindari N+1 problem.
-        // forUser()  : Scope buatan sendiri (di model Aduan) untuk memfilter data sesuai peran pengguna login.
-        $query = Aduan::with(['petugas', 'respon.user'])
-                      ->forUser(Auth::user());
+        $aduans = Aduan::with(['petugas', 'respon.user'])
+            ->forUser(Auth::user())
+            ->filterAduan($request)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        // ------------------------------------------------------------------
-        // 2. Terapkan Filter Berdasarkan Input dari Pengguna (Request)
-        // ------------------------------------------------------------------
-        
-        // Filter berdasarkan status (Sudah/Belum direspon)
-        if ($request->filled('status')) {
-            $isSudahDirespon = ($request->status === 'sudah') ? true : false;
-            $query->where('sudah_direspon', $isSudahDirespon);
-        }
-
-        // Filter berdasarkan kanal pengaduan (Instagram, Facebook, dll)
-        if ($request->filled('kanal')) {
-            if ($request->kanal === 'Lainnya') {
-                // Jika filter yang dipilih adalah 'Lainnya', kita gunakan 'like' agar 
-                // data seperti 'Lainnya: Twitter' atau 'Lainnya: Email' tetap ikut terfilter.
-                $query->where('kanal', 'like', 'Lainnya%');
-            } else {
-                $query->where('kanal', $request->kanal);
-            }
-        }
-
-        // Filter berdasarkan tahun kejadian/aduan
-        if ($request->filled('tahun')) {
-            $query->whereYear('tanggal_aduan', $request->tahun);
-        }
-
-        // ------------------------------------------------------------------
-        // 3. Eksekusi Query dan Urutkan Hasilnya
-        // ------------------------------------------------------------------
-        // orderBy() : Urutkan dari data yang paling baru ditambahkan (descending).
-        // get()     : Eksekusi query untuk mengambil semua hasilnya dalam bentuk Collection.
-        $aduans = $query->orderBy('created_at', 'desc')->get();
         $listKanal = self::listKanal();
-        $listTahun = Aduan::daftarTahun()->pluck('tahun');
+        $listTahun = Aduan::getDaftarTahun(Aduan::query());
 
         return view('aduan.data', compact('aduans', 'listKanal', 'listTahun'));
     }
@@ -168,14 +130,10 @@ class AduanController extends Controller
             return back()->with('error', 'Hanya admin yang dapat menghapus aduan.');
         }
 
-        if ($aduan->screenshot_path) {
-            Storage::disk('public')->delete($aduan->screenshot_path);
-        }
-
-        $nomor = $aduan->nomor_aduan;
+        $id = $aduan->id;
         $aduan->delete();
 
-        return back()->with('success', 'Aduan ' . $nomor . ' berhasil dihapus.');
+        return back()->with('success', 'Aduan #' . $id . ' berhasil dihapus.');
     }
 
     // =========================================================

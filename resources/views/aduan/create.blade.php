@@ -107,23 +107,12 @@
                             Isi Aduan <span class="text-red-500">*</span>
                         </label>
                         <textarea name="isi_aduan" rows="5" required
-                                  placeholder="Tuliskan isi aduan secara lengkap dan jelas..."
+                                  placeholder="Tuliskan isi aduan atau keterangan (caption) secara lengkap dan jelas..."
                                   class="w-full border-slate-200 rounded-xl shadow-sm text-sm
                                          focus:border-blue-400 focus:ring-2 focus:ring-blue-100">{{ old('isi_aduan') }}</textarea>
                     </div>
 
-                    {{-- Caption --}}
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">
-                            Caption / Keterangan Singkat
-                        </label>
-                        <input type="text" name="caption"
-                               value="{{ old('caption') }}"
-                               placeholder="Contoh: Komentar di postingan Instagram tanggal 5 Juli"
-                               maxlength="500"
-                               class="w-full border-slate-200 rounded-xl shadow-sm text-sm
-                                      focus:border-blue-400 focus:ring-2 focus:ring-blue-100">
-                    </div>
+
 
                     {{-- Tanggal & Waktu Postingan --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
