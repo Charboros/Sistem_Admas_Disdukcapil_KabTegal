@@ -79,18 +79,10 @@
                                 </span>
                             </div>
     
-                            <div class="flex-none w-32 flex flex-col gap-1.5 border-r border-slate-100 pr-4 items-center text-center">
-                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Gambar</span>
-                                @if($aduan->screenshot)
-                                    <img src="{{ route('aduan.image', $aduan->id) }}" 
-                                         alt="Screenshot" 
-                                         class="w-12 h-12 object-cover rounded shadow-sm border border-slate-200 cursor-zoom-in hover:opacity-90"
-                                         onclick="openLightbox('{{ route('aduan.image', $aduan->id) }}')"
-                                         title="Klik jika ingin lihat full"
-                                         loading="lazy">
-                                @else
-                                    <span class="text-[10px] text-slate-400 italic mt-2">Tidak ada foto</span>
-                                @endif
+                            {{-- Kolom 3: Isi Aduan --}}
+                            <div class="flex-[2] flex flex-col gap-1.5 border-r border-slate-100 pr-4">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Isi Aduan</span>
+                                <span class="text-xs text-slate-600 leading-relaxed whitespace-pre-wrap">{{ Str::limit($aduan->isi_aduan, 500) }}</span>
                             </div>
     
                             {{-- Kolom 4: Waktu Postingan --}}

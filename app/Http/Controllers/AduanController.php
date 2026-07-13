@@ -17,18 +17,20 @@ class AduanController extends Controller
 
     public static function listKanal(): array
     {
-        return ['Instagram', 'Facebook', 'TikTok', 'Gmaps Review', 'Lainnya'];
+        $kanals = \App\Models\Kanal::pluck('nama')->sort()->values()->toArray();
+        // Hapus 'Lainnya' jika ada, lalu taruh di paling bawah
+        $kanals = array_filter($kanals, fn($k) => strtolower($k) !== 'lainnya');
+        $kanals[] = 'Lainnya';
+        return array_values($kanals);
     }
 
     public static function listKlasifikasi(): array
     {
-        return [
-            'Pelayanan Pencatatan Sipil',
-            'Pelayanan Pendaftaran Penduduk',
-            'Rekam/Cetak/KTP/KIA',
-            'Infrastruktur',
-            'Lainnya',
-        ];
+        $klasifikasis = \App\Models\Klasifikasi::pluck('nama')->sort()->values()->toArray();
+        // Hapus 'Lainnya' jika ada, lalu taruh di paling bawah
+        $klasifikasis = array_filter($klasifikasis, fn($k) => strtolower($k) !== 'lainnya');
+        $klasifikasis[] = 'Lainnya';
+        return array_values($klasifikasis);
     }
 
     // =========================================================

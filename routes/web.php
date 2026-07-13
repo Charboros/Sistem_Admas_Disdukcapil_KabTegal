@@ -24,6 +24,22 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/rekap', [LaporanController::class, 'index'])->name('laporan.index');
     Route::get('/rekap/export', [AduanController::class, 'export'])->name('aduan.export');
+
+    Route::middleware(['admin'])->prefix('konfigurasi')->name('konfigurasi.')->group(function () {
+        $konfigController = \App\Http\Controllers\KonfigurasiController::class;
+        Route::get('/', [$konfigController, 'index'])->name('index');
+        
+        Route::post('/user', [$konfigController, 'storeUser'])->name('user.store');
+        Route::delete('/user/{user}', [$konfigController, 'destroyUser'])->name('user.destroy');
+        
+        Route::post('/kanal', [$konfigController, 'storeKanal'])->name('kanal.store');
+        Route::post('/kanal/merge', [$konfigController, 'mergeKanal'])->name('kanal.merge');
+        Route::delete('/kanal/{kanal}', [$konfigController, 'destroyKanal'])->name('kanal.destroy');
+        
+        Route::post('/klasifikasi', [$konfigController, 'storeKlasifikasi'])->name('klasifikasi.store');
+        Route::post('/klasifikasi/merge', [$konfigController, 'mergeKlasifikasi'])->name('klasifikasi.merge');
+        Route::delete('/klasifikasi/{klasifikasi}', [$konfigController, 'destroyKlasifikasi'])->name('klasifikasi.destroy');
+    });
 });
 
 require __DIR__ . '/auth.php';
