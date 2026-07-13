@@ -13,9 +13,9 @@ class KonfigurasiController extends Controller
 {
     public function index()
     {
-        $users = User::whereIn('role', ['petugas', 'kabid'])->get();
-        $kanals = Kanal::all();
-        $klasifikasis = Klasifikasi::all();
+        $users = User::whereIn('role', ['petugas', 'kabid'])->orderBy('name')->get();
+        $kanals = Kanal::orderByRaw("CASE WHEN LOWER(nama) = 'lainnya' THEN 1 ELSE 0 END, nama ASC")->get();
+        $klasifikasis = Klasifikasi::orderByRaw("CASE WHEN LOWER(nama) = 'lainnya' THEN 1 ELSE 0 END, nama ASC")->get();
         
         $aduanKanals = \App\Models\Aduan::select('kanal')->distinct()->whereNotNull('kanal')->pluck('kanal');
         $allKanalsAsal = $aduanKanals->concat($kanals->pluck('nama'))->unique()->sort()->values();
