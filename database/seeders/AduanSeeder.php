@@ -13,7 +13,7 @@ class AduanSeeder extends Seeder
     {
         $petugas = User::where('role', 'petugas')->first() ?? User::first();
         $admin   = User::where('role', 'admin')->first() ?? User::first();
-        $kabid   = User::where('role', 'kabid')->first() ?? User::first();
+        $pimpinan   = User::where('role', 'pimpinan')->first() ?? User::first();
 
         // Siapkan array berisi contoh-contoh data aduan palsu (dummy data)
         // Data ini nantinya akan dilooping (diulang) dan disimpan ke database
@@ -62,7 +62,7 @@ class AduanSeeder extends Seeder
                 'created_by'     => $admin->id,
                 'respon'         => [
                     [
-                        'respon_by' => $kabid->id,
+                        'respon_by' => $pimpinan->id,
                         'isi_respon' => 'Kami mohon maaf atas ketidaknyamanan ini. Kami sedang memperbaiki sistem antrian dan memperluas ruang tunggu.',
                         'tanggal_respon' => now()->subDays(6)->addHours(1),
                     ]

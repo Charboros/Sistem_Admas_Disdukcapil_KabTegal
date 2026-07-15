@@ -331,7 +331,7 @@
                 $initials = strtoupper(substr($user->name, 0, 1));
                 $roleLabel = match($user->role) {
                     'admin'   => 'Administrator',
-                    'kabid'   => 'Kepala Bidang',
+                    'pimpinan' => 'Pimpinan',
                     'petugas' => 'Petugas',
                     default   => ucfirst($user->role),
                 };

@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
         // Urutan pemanggilan ini penting, misalnya User harus dibuat lebih dulu 
         // sebelum Aduan karena Aduan butuh data pembuat (created_by)
         $this->call([
-            UserSeeder::class,   // 1. Buat data pengguna (admin, petugas, kabid)
+            UserSeeder::class,   // 1. Buat data pengguna (admin, petugas, pimpinan)
             AduanSeeder::class,  // 2. Buat data aduan palsu (dummy) dan responnya
             KonfigurasiSeeder::class, // 3. Buat data awal Kanal & Klasifikasi
         ]);

@@ -28,11 +28,11 @@ class UserSeeder extends Seeder
             'role'     => 'petugas',
         ]);
 
-        // Akun 3: Kabid (Bisa memantau dan merespon aduan)
+        // Akun 3: Pimpinan (Bisa memantau dan merespon aduan)
         User::create([
-            'name'     => 'Kabid',
+            'name'     => 'Pimpinan',
             'password' => Hash::make('password123'),
-            'role'     => 'kabid',
+            'role'     => 'pimpinan',
         ]);
     }
 }

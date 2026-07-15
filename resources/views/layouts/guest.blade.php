@@ -404,8 +404,8 @@
                 <span class="demo-pass">password123</span>
             </div>
             <div class="demo-row">
-                <span class="demo-role">Kabid</span>
-                <span>nama: <strong>Kabid</strong></span>
+                <span class="demo-role">Pimpinan</span>
+                <span>nama: <strong>Pimpinan</strong></span>
                 <span class="demo-pass">password123</span>
             </div>
         </div>

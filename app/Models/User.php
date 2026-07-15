@@ -38,9 +38,9 @@ class User extends Authenticatable
         return $this->role === 'admin';
     }
 
-    public function isKabid(): bool
+    public function isPimpinan(): bool
     {
-        return $this->role === 'kabid';
+        return $this->role === 'pimpinan';
     }
 
     // =========================================================

@@ -13,7 +13,7 @@ class KonfigurasiController extends Controller
 {
     public function index()
     {
-        $users = User::whereIn('role', ['petugas', 'kabid'])->orderBy('name')->get();
+        $users = User::whereIn('role', ['petugas', 'pimpinan'])->orderBy('name')->get();
         $kanals = Kanal::orderByRaw("CASE WHEN LOWER(nama) = 'lainnya' THEN 1 ELSE 0 END, nama ASC")->get();
         $klasifikasis = Klasifikasi::orderByRaw("CASE WHEN LOWER(nama) = 'lainnya' THEN 1 ELSE 0 END, nama ASC")->get();
         
@@ -33,7 +33,7 @@ class KonfigurasiController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'role' => ['required', 'in:petugas,kabid'],
+            'role' => ['required', 'in:petugas,pimpinan'],
             'password' => ['required', 'confirmed', Password::defaults()],
         ]);
 
@@ -50,7 +50,7 @@ class KonfigurasiController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'role' => ['required', 'in:petugas,kabid'],
+            'role' => ['required', 'in:petugas,pimpinan'],
             'password' => ['nullable', 'confirmed', Password::defaults()],
         ]);
 

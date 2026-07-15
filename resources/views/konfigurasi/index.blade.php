@@ -67,7 +67,7 @@
                             <label class="block text-sm font-medium text-slate-700 mb-1">Role</label>
                             <select name="role" required class="w-full border-slate-200 rounded-xl text-sm bg-white">
                                 <option value="petugas">Petugas</option>
-                                <option value="kabid">Kepala Bidang (Kabid)</option>
+                                <option value="pimpinan">Pimpinan</option>
                             </select>
                         </div>
                         <div>
@@ -329,7 +329,7 @@
                         <label class="block text-sm font-medium text-slate-700 mb-1">Role</label>
                         <select name="role" id="edit-user-role" required class="w-full border-slate-200 rounded-xl text-sm bg-white">
                             <option value="petugas">Petugas</option>
-                            <option value="kabid">Kepala Bidang (Kabid)</option>
+                            <option value="pimpinan">Pimpinan</option>
                         </select>
                     </div>
                     <div>
