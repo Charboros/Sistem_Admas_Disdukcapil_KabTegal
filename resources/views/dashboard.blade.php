@@ -1,11 +1,18 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-wrap justify-between items-center gap-3">
-            <div>
-                <h1 class="font-bold text-xl text-white">Dashboard</h1>
-                <p class="text-sm text-blue-100 mt-0.5">
-                    Selamat datang, <span class="font-bold text-white">{{ Auth::user()->name }}</span>
-                </p>
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center shrink-0">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-bold text-xl text-white">Dashboard</h1>
+                    <p class="text-sm text-blue-100 mt-0.5">
+                        Selamat datang, <span class="font-bold text-white">{{ Auth::user()->name }}</span>
+                    </p>
+                </div>
             </div>
             {{-- Filter Tahun --}}
             <form method="GET" action="{{ route('dashboard') }}" class="flex items-center gap-2">
