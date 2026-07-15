@@ -29,20 +29,22 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/rekap/export', [AduanController::class, 'export'])->name('aduan.export');
 
     Route::middleware(['admin'])->prefix('konfigurasi')->name('konfigurasi.')->group(function () {
-        $konfigController = \App\Http\Controllers\KonfigurasiController::class;
-        Route::get('/', [$konfigController, 'index'])->name('index');
+        Route::get('/', [\App\Http\Controllers\KonfigurasiController::class, 'index'])->name('index');
         
-        Route::post('/user', [$konfigController, 'storeUser'])->name('user.store');
-        Route::put('/user/{user}', [$konfigController, 'updateUser'])->name('user.update');
-        Route::delete('/user/{user}', [$konfigController, 'destroyUser'])->name('user.destroy');
+        $userController = \App\Http\Controllers\UserController::class;
+        Route::post('/user', [$userController, 'store'])->name('user.store');
+        Route::put('/user/{user}', [$userController, 'update'])->name('user.update');
+        Route::delete('/user/{user}', [$userController, 'destroy'])->name('user.destroy');
         
-        Route::post('/kanal', [$konfigController, 'storeKanal'])->name('kanal.store');
-        Route::post('/kanal/merge', [$konfigController, 'mergeKanal'])->name('kanal.merge');
-        Route::delete('/kanal/{kanal}', [$konfigController, 'destroyKanal'])->name('kanal.destroy');
+        $kanalController = \App\Http\Controllers\KanalController::class;
+        Route::post('/kanal', [$kanalController, 'store'])->name('kanal.store');
+        Route::post('/kanal/merge', [$kanalController, 'merge'])->name('kanal.merge');
+        Route::delete('/kanal/{kanal}', [$kanalController, 'destroy'])->name('kanal.destroy');
         
-        Route::post('/klasifikasi', [$konfigController, 'storeKlasifikasi'])->name('klasifikasi.store');
-        Route::post('/klasifikasi/merge', [$konfigController, 'mergeKlasifikasi'])->name('klasifikasi.merge');
-        Route::delete('/klasifikasi/{klasifikasi}', [$konfigController, 'destroyKlasifikasi'])->name('klasifikasi.destroy');
+        $klasifikasiController = \App\Http\Controllers\KlasifikasiController::class;
+        Route::post('/klasifikasi', [$klasifikasiController, 'store'])->name('klasifikasi.store');
+        Route::post('/klasifikasi/merge', [$klasifikasiController, 'merge'])->name('klasifikasi.merge');
+        Route::delete('/klasifikasi/{klasifikasi}', [$klasifikasiController, 'destroy'])->name('klasifikasi.destroy');
     });
 });
 

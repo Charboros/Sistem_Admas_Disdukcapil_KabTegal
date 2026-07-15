@@ -14,7 +14,7 @@ class LaporanController extends Controller
             ->orderBy('tanggal_aduan', 'desc')
             ->get();
 
-        $listKanal = \App\Http\Controllers\AduanController::listKanal();
+        $listKanal = \App\Models\Kanal::getList();
         $listTahun = Aduan::getDaftarTahun(Aduan::query());
 
         return view('laporan.index', compact('aduans', 'listKanal', 'listTahun'));

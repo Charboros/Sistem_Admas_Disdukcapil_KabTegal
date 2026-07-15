@@ -13,7 +13,7 @@
         </div>
     </x-slot>
 
-    <div class="max-w-4xl mx-auto">
+    <div class="max-w-4xl mx-auto opacity-0 animate-slide-up delay-75">
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
 
             {{-- Card Header --}}

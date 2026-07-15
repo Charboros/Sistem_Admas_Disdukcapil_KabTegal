@@ -26,7 +26,7 @@
         </div>
     </x-slot>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden opacity-0 animate-slide-up">
 
         {{-- Search & Filter Bar --}}
         <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/60 flex flex-wrap items-center gap-3">
@@ -94,9 +94,9 @@
                         <th class="px-4 py-3 text-left font-semibold">Petugas</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
+                <tbody class="divide-y divide-slate-100 text-sm">
                     @forelse($aduans as $index => $item)
-                        <tr class="hover:bg-blue-50/30 transition-colors searchable-row">
+                        <tr class="hover-row opacity-0 animate-slide-in-right delay-{{ ($loop->index % 10 + 1) * 75 }}">
                             <td class="px-4 py-3 text-slate-400 text-xs">
                                 <a href="{{ route('aduan.show', $item->id) }}"
                                    class="font-mono font-bold text-blue-700 hover:underline" title="Lihat Detail Aduan">
@@ -134,7 +134,7 @@
                             </td>
 
                             <td class="px-4 py-3 max-w-xs">
-                                <p class="text-slate-600 text-xs line-clamp-2">{{ $item->isi_aduan }}</p>
+                                <p class="text-slate-600 text-xs line-clamp-2 break-words break-all">{{ $item->isi_aduan }}</p>
                             </td>
 
                             <td class="px-4 py-3 text-center">

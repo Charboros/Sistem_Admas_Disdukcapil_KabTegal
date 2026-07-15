@@ -11,52 +11,16 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class AduanController extends Controller
 {
-    // =========================================================
-    // Referensi kanal & klasifikasi
-    // =========================================================
-
-    public static function listKanal(): array
-    {
-        $kanals = \App\Models\Kanal::pluck('nama')->sort()->values()->toArray();
-        // Hapus 'Lainnya' jika ada, lalu taruh di paling bawah
-        $kanals = array_filter($kanals, fn($k) => strtolower($k) !== 'lainnya');
-        $kanals[] = 'Lainnya';
-        return array_values($kanals);
-    }
-
-    public static function listKlasifikasi(): array
-    {
-        $klasifikasis = \App\Models\Klasifikasi::pluck('nama')->sort()->values()->toArray();
-        // Hapus 'Lainnya' jika ada, lalu taruh di paling bawah
-        $klasifikasis = array_filter($klasifikasis, fn($k) => strtolower($k) !== 'lainnya');
-        $klasifikasis[] = 'Lainnya';
-        return array_values($klasifikasis);
-    }
-
-    // =========================================================
-    // Halaman Input Aduan (Form)
-    // =========================================================
-
     public function create()
     {
-        $listKanal       = self::listKanal();
-        $listKlasifikasi = self::listKlasifikasi();
+        $listKanal       = \App\Models\Kanal::getList();
+        $listKlasifikasi = \App\Models\Klasifikasi::getList();
 
         return view('aduan.create', compact('listKanal', 'listKlasifikasi'));
     }
 
-    public function store(Request $request)
+    public function store(\App\Http\Requests\StoreAduanRequest $request)
     {
-        $request->validate([
-            'kanal'          => 'required|string',
-            'klasifikasi'    => 'required|string',
-            'isi_aduan'      => 'required|string',
-
-            'tanggal_aduan'  => 'required|date',
-            'waktu_aduan'    => 'nullable|date_format:H:i',
-            'screenshot'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
-        ]);
-
         $screenshotData = null;
         if ($request->hasFile('screenshot')) {
             $screenshotData = file_get_contents($request->file('screenshot')->getRealPath());
@@ -106,7 +70,7 @@ class AduanController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        $listKanal = self::listKanal();
+        $listKanal = \App\Models\Kanal::getList();
         $listTahun = Aduan::getDaftarTahun(Aduan::query());
 
         return view('aduan.data', compact('aduans', 'listKanal', 'listTahun'));

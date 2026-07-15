@@ -89,21 +89,15 @@ class Aduan extends Model
 
     public static function dataBulanFormatted(Builder $query, int $tahun): array
     {
-        // Untuk optimasi, kita ambil data lalu grouping di collection (PHP)
-        // daripada menggunakan MONTH() di query yang membuat index tidak dipakai.
-        $rawAduans = (clone $query)
-            ->whereBetween('tanggal_aduan', ["{$tahun}-01-01", "{$tahun}-12-31"])
-            ->get(['tanggal_aduan']);
+        $driver = \Illuminate\Support\Facades\DB::connection()->getDriverName();
+        $monthSql = $driver === 'sqlite' ? "cast(strftime('%m', tanggal_aduan) as integer)" : "MONTH(tanggal_aduan)";
 
-        $grouped = [];
-        foreach ($rawAduans as $aduan) {
-            // Karena di model sudah dicast ke date (Carbon)
-            $bulan = $aduan->tanggal_aduan->format('n');
-            if (!isset($grouped[$bulan])) {
-                $grouped[$bulan] = 0;
-            }
-            $grouped[$bulan]++;
-        }
+        $rawAduans = (clone $query)
+            ->selectRaw("{$monthSql} as bulan, COUNT(*) as jumlah")
+            ->whereBetween('tanggal_aduan', ["{$tahun}-01-01", "{$tahun}-12-31"])
+            ->groupBy(\Illuminate\Support\Facades\DB::raw($monthSql))
+            ->pluck('jumlah', 'bulan')
+            ->toArray();
 
         $namaBulan = [
             1 => 'Jan', 2 => 'Feb', 3 => 'Mar', 4  => 'Apr',
@@ -115,7 +109,7 @@ class Aduan extends Model
         for ($b = 1; $b <= 12; $b++) {
             $result[] = [
                 'bulan'  => $namaBulan[$b],
-                'jumlah' => $grouped[$b] ?? 0,
+                'jumlah' => $rawAduans[$b] ?? 0,
             ];
         }
         return $result;
@@ -123,32 +117,33 @@ class Aduan extends Model
 
     public static function getTrenTahunan(Builder $query): array
     {
-        $raw = (clone $query)->whereNotNull('tanggal_aduan')->get(['tanggal_aduan']);
-        $grouped = [];
-        foreach ($raw as $aduan) {
-            $tahun = $aduan->tanggal_aduan->format('Y');
-            if (!isset($grouped[$tahun])) $grouped[$tahun] = 0;
-            $grouped[$tahun]++;
-        }
-        ksort($grouped);
-        
-        $result = [];
-        foreach ($grouped as $tahun => $jumlah) {
-            $result[] = (object) ['tahun' => $tahun, 'jumlah' => $jumlah];
-        }
-        return $result;
+        $driver = \Illuminate\Support\Facades\DB::connection()->getDriverName();
+        $yearSql = $driver === 'sqlite' ? "cast(strftime('%Y', tanggal_aduan) as integer)" : "YEAR(tanggal_aduan)";
+
+        $results = (clone $query)
+            ->whereNotNull('tanggal_aduan')
+            ->selectRaw("{$yearSql} as tahun, COUNT(*) as jumlah")
+            ->groupBy(\Illuminate\Support\Facades\DB::raw($yearSql))
+            ->orderBy('tahun', 'asc')
+            ->get();
+
+        return $results->map(function ($item) {
+            return (object) ['tahun' => $item->tahun, 'jumlah' => $item->jumlah];
+        })->toArray();
     }
 
     public static function getDaftarTahun(Builder $query): array
     {
-        $raw = (clone $query)->whereNotNull('tanggal_aduan')->get(['tanggal_aduan']);
-        $tahun = [];
-        foreach ($raw as $aduan) {
-            $tahun[$aduan->tanggal_aduan->format('Y')] = true;
-        }
-        $tahun = array_keys($tahun);
-        rsort($tahun);
-        return $tahun;
+        $driver = \Illuminate\Support\Facades\DB::connection()->getDriverName();
+        $yearSql = $driver === 'sqlite' ? "cast(strftime('%Y', tanggal_aduan) as integer)" : "YEAR(tanggal_aduan)";
+
+        return (clone $query)
+            ->whereNotNull('tanggal_aduan')
+            ->selectRaw("{$yearSql} as tahun")
+            ->distinct()
+            ->orderBy('tahun', 'desc')
+            ->pluck('tahun')
+            ->toArray();
     }
 
     public function scopeInYear(Builder $query, int $year): Builder

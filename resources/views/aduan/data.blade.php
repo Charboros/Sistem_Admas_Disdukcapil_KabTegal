@@ -19,7 +19,7 @@
     </x-slot>
 
     {{-- Filter Bar --}}
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 mb-6">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 mb-6 opacity-0 animate-slide-up">
         <form action="{{ route('aduan.data') }}" method="GET" class="flex flex-wrap items-center gap-3">
             <div class="relative flex-1 min-w-[200px] sm:max-w-xs">
                 <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -60,8 +60,7 @@
 
     <div class="space-y-4" id="aduan-list">
         @forelse($aduans as $aduan)
-            <div class="aduan-card bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden
-                        transition-all duration-200 hover:shadow-md hover:border-blue-200"
+            <div class="aduan-card bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden opacity-0 animate-slide-up delay-{{ ($loop->index % 5 + 1) * 75 }} transition-all duration-200 hover:shadow-md hover:border-blue-200"
                  data-id="{{ $aduan->id }}">
 
                 {{-- Card Layout 5 Kolom Horizontal Sesuai Permintaan --}}
@@ -89,7 +88,7 @@
                             {{-- Kolom 3: Isi Aduan --}}
                             <div class="flex-[2] flex flex-col gap-1.5 border-r border-slate-100 pr-4">
                                 <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Isi Aduan</span>
-                                <span class="text-xs text-slate-600 leading-relaxed whitespace-pre-wrap">{{ Str::limit($aduan->isi_aduan, 500) }}</span>
+                                <span class="text-xs text-slate-600 leading-relaxed whitespace-pre-wrap break-words break-all line-clamp-3">{{ Str::limit($aduan->isi_aduan, 500) }}</span>
                             </div>
     
                             {{-- Kolom 4: Waktu Postingan --}}
