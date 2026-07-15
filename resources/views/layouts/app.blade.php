@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'Layanan Admas') }} — Disdukcapil Kab. Tegal</title>
+    <title>Siladmas — Sistem Laporan Aduan Masyarakat</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/tegal-logo.png') }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -54,10 +55,11 @@
             opacity: 0;
             transition: opacity 0.15s 0.05s;
             pointer-events: none;
+            width: 100%;
         }
-        .sidebar:hover .brand-text { opacity: 1; }
-        .brand-text p:first-child { font-size: 0.8rem; font-weight: 700; color: white; margin: 0; }
-        .brand-text p:last-child { font-size: 0.65rem; color: rgba(255,255,255,0.65); margin: 0; }
+        .sidebar:hover .brand-text { opacity: 1; pointer-events: auto; }
+        .brand-text p:first-child { font-size: 1.15rem; font-weight: 800; color: white; margin: 0; line-height: 1.2; }
+        .brand-text p:last-child { font-size: 0.75rem; color: rgba(255,255,255,0.75); margin: 0; line-height: 1.2; }
 
         /* Nav */
         .sidebar-nav { flex: 1; padding: 1rem 0.625rem; display: flex; flex-direction: column; gap: 0.25rem; overflow: hidden; }
@@ -229,14 +231,13 @@
         {{-- Brand --}}
         <div class="sidebar-brand">
             <div class="brand-icon">
-                <svg width="18" height="18" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                </svg>
+                <img src="{{ asset('images/tegal-logo.png') }}" alt="Logo Tegal" class="w-7 h-7 object-contain">
             </div>
-            <div class="brand-text">
-                <p>Layanan Admas</p>
-                <p>Disdukcapil Kab. Tegal</p>
+            <div class="brand-text flex items-center ml-2">
+                <div>
+                    <p>Siladmas</p>
+                    <p class="whitespace-nowrap overflow-hidden text-ellipsis">Sistem Laporan Aduan</p>
+                </div>
             </div>
         </div>
 

@@ -5,7 +5,6 @@
                 <h1 class="font-bold text-xl text-slate-800">Dashboard</h1>
                 <p class="text-sm text-slate-500 mt-0.5">
                     Selamat datang, <span class="font-semibold text-blue-600">{{ Auth::user()->name }}</span>
-                    &mdash; {{ ucfirst(Auth::user()->role) }}
                 </p>
             </div>
             {{-- Filter Tahun --}}
