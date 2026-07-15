@@ -15,14 +15,9 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function update(Request $request)
+    public function update(\App\Http\Requests\UpdateProfileRequest $request)
     {
         $user = $request->user();
-
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'password' => ['nullable', 'confirmed', Password::defaults()],
-        ]);
 
         $user->name = $request->name;
 

@@ -7,12 +7,8 @@ use Illuminate\Http\Request;
 
 class KanalController extends Controller
 {
-    public function store(Request $request)
+    public function store(\App\Http\Requests\StoreKanalRequest $request)
     {
-        $request->validate([
-            'nama' => ['required', 'string', 'max:255', 'unique:kanals,nama'],
-        ]);
-
         Kanal::create([
             'nama' => $request->nama,
         ]);
@@ -30,13 +26,8 @@ class KanalController extends Controller
         return back()->with('success', 'Kanal berhasil dihapus.');
     }
 
-    public function merge(Request $request)
+    public function merge(\App\Http\Requests\MergeKanalRequest $request)
     {
-        $request->validate([
-            'kanal_asal' => 'required|string',
-            'kanal_tujuan' => 'required|string|different:kanal_asal',
-        ]);
-
         \App\Models\Aduan::where('kanal', $request->kanal_asal)
             ->update(['kanal' => $request->kanal_tujuan]);
 

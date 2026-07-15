@@ -7,12 +7,8 @@ use Illuminate\Http\Request;
 
 class KlasifikasiController extends Controller
 {
-    public function store(Request $request)
+    public function store(\App\Http\Requests\StoreKlasifikasiRequest $request)
     {
-        $request->validate([
-            'nama' => ['required', 'string', 'max:255', 'unique:klasifikasis,nama'],
-        ]);
-
         Klasifikasi::create([
             'nama' => $request->nama,
         ]);
@@ -30,13 +26,8 @@ class KlasifikasiController extends Controller
         return back()->with('success', 'Klasifikasi berhasil dihapus.');
     }
 
-    public function merge(Request $request)
+    public function merge(\App\Http\Requests\MergeKlasifikasiRequest $request)
     {
-        $request->validate([
-            'klasifikasi_asal' => 'required|string',
-            'klasifikasi_tujuan' => 'required|string|different:klasifikasi_asal',
-        ]);
-
         \App\Models\Aduan::where('klasifikasi', $request->klasifikasi_asal)
             ->update(['klasifikasi' => $request->klasifikasi_tujuan]);
 

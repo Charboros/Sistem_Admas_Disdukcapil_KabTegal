@@ -9,15 +9,8 @@ use Illuminate\Support\Facades\Auth;
 
 class ResponAduanController extends Controller
 {
-    public function store(Request $request, Aduan $aduan)
+    public function store(\App\Http\Requests\StoreResponRequest $request, Aduan $aduan)
     {
-        // ------------------------------------------------------------------
-        // 1. Validasi Input
-        // ------------------------------------------------------------------
-        // Memastikan isi respon tidak kosong dan berupa teks
-        $request->validate([
-            'isi_respon' => 'required|string',
-        ]);
 
         // ------------------------------------------------------------------
         // 2. Simpan Data Respon ke Database
