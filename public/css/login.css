@@ -214,6 +214,41 @@ body {
 .demo-name { font-family: monospace; color: #334155; }
 .demo-pass { color: #94a3b8; font-size: 0.72rem; }
 
+/* ── Custom Password Toggle ── */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.password-wrapper .form-input {
+    padding-right: 2.75rem; /* Space for the icon */
+}
+.password-toggle {
+    position: absolute;
+    right: 0.75rem;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+    height: 100%;
+}
+.password-toggle:hover {
+    color: #3b82f6;
+}
+.password-toggle svg {
+    width: 20px;
+    height: 20px;
+}
+/* Sembunyikan icon native dari Edge/IE */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
 @media (max-width: 800px) {
     body { flex-direction: column; }
     .brand-panel { padding: 2rem 1.5rem; flex: none; min-height: 280px; }
