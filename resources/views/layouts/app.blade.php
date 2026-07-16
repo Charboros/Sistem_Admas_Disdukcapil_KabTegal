@@ -370,7 +370,7 @@
         @endisset
 
         {{-- Page Content --}}
-        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-100 p-6 opacity-0 animate-fade-in">
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-100 p-6">
 
             {{-- Flash success --}}
             @if(session('success'))
